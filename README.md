@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Petits Savants — Site de vente
 
-## Getting Started
+Landing page mono-produit pour le kit d'écriture magique réutilisable
+"Petits Savants" (marché de lancement : Bénin). Next.js (App Router) +
+Tailwind CSS v4, sans backend — les commandes partent vers WhatsApp ou par
+email.
 
-First, run the development server:
+## Lancer en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Où modifier le contenu
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tout le contenu éditorial (textes, prix, packs, FAQ, avis clients, contacts)
+est centralisé dans **[lib/site-config.ts](lib/site-config.ts)**. C'est le
+seul fichier à modifier pour :
 
-## Learn More
+- changer le numéro WhatsApp / email de commande (`brand.whatsappNumber`,
+  `brand.orderEmail`) ;
+- ajuster les prix et remises des packs (`packs`) ;
+- mettre à jour la FAQ (`faq`) ;
+- remplacer les avis clients placeholder par de vrais témoignages
+  (`testimonials`).
 
-To learn more about Next.js, take a look at the following resources:
+Cherchez `[PLACEHOLDER]` dans le code (`grep -rn "PLACEHOLDER" .`) pour
+retrouver tous les éléments provisoires à remplacer avant la mise en ligne
+définitive : numéro WhatsApp, prix, avis clients, mentions légales, et les
+emplacements de photos/vidéos réelles (actuellement des blocs
+`PlaceholderMedia` avec bordure en pointillés).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `app/page.tsx` — assemble la landing page (une seule page scrollable).
+- `app/commande/page.tsx` — page de commande dédiée (utile pour les liens
+  directs de pub), accepte `?pack=decouverte|fratrie|famille` pour
+  présélectionner un pack.
+- `components/` — une section = un composant.
+- `lib/site-config.ts` — contenu et configuration centralisés.
 
-## Deploy on Vercel
+## Déployer sur Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Pousser ce dossier sur un dépôt GitHub.
+2. Sur [vercel.com/new](https://vercel.com/new), importer le dépôt (Vercel
+   détecte Next.js automatiquement, aucune configuration nécessaire).
+3. Une fois déployé, mettre à jour `siteUrl` dans `app/layout.tsx` avec le
+   vrai domaine.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le site est statique/léger (pas de base de données, pas de variables
+d'environnement requises) : le plan gratuit de Vercel suffit largement.

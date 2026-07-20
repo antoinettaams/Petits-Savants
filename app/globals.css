@@ -1,26 +1,135 @@
 @import "tailwindcss";
 
+/*
+ * Direction artistique "Ardoise & Encre" — voir CLAUDE.md.
+ * Deux couleurs de marque (ardoise + encre rouge), un neutre foncé qui est
+ * une teinte de l'ardoise elle-même, un fond clair "craie". Univers assumé
+ * en un seul thème (pas de dark mode) : les sections sombres (héros,
+ * chiffres clés, footer) sont un choix de rythme visuel, pas un thème.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f6f2e7;
+  --surface: #fffdf8;
+  --surface-line: #e7ddc9;
+
+  --ink: #16202a;
+  --ink-soft: #1e2c38;
+  --muted: #5b6b72;
+
+  --primary: #2b4b5f;
+  --primary-light: #7fa5bd;
+  --primary-tint: #e6edf0;
+
+  --accent: #c6432f;
+  --accent-dark: #a8371f;
+  --accent-tint: #f3ded5;
+
+  --cream: #fbf3e9;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-line: var(--surface-line);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-tint: var(--primary-tint);
+
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-tint: var(--accent-tint);
+
+  --color-cream: var(--cream);
+
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Bandeau de confiance défilant (marquee), sous le hero. Piloté en CSS pur
+   (transform, pas de JS) pour rester léger sur mobile. */
+.marquee-track {
+  animation: marquee 26s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Halos organiques discrets utilisés en fond des sections sombres */
+.blob-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.blob-field::before,
+.blob-field::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+.blob-field::before {
+  width: 420px;
+  height: 420px;
+  right: -140px;
+  top: -180px;
+  background: radial-gradient(circle at 30% 30%, rgba(198, 67, 47, 0.32), transparent 65%);
+}
+.blob-field::after {
+  width: 340px;
+  height: 340px;
+  left: -120px;
+  bottom: -160px;
+  background: radial-gradient(circle at 60% 60%, rgba(127, 165, 189, 0.28), transparent 70%);
 }

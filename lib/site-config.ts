@@ -12,16 +12,15 @@
 export const brand = {
   name: "Petits Savants",
   tagline: "Le cahier magique qui donne le goût d'apprendre",
-  // [PLACEHOLDER] Numéro WhatsApp au format international sans "+" ni espaces
-  // (utilisé pour les liens wa.me). Exemple Bénin : 22990000000
-  whatsappNumber: "22900000000",
-  whatsappDisplay: "+229 00 00 00 00", // [PLACEHOLDER]
-  // [PLACEHOLDER] Adresse email de réception des commandes
+  whatsappNumber: "22943757982",
+  whatsappDisplay: "+229 04 37 57 982",
+  formspreeId: "mkodvqzg", // ✅ ID Formspree
   orderEmail: "commandes@petits-savants.example",
-  facebookUrl: "https://facebook.com/petitssavants", // [PLACEHOLDER]
-  tiktokUrl: "https://tiktok.com/@petitssavants", // [PLACEHOLDER]
-  city: "Cotonou, Bénin", // [PLACEHOLDER]
+  facebookUrl: "https://facebook.com/petitssavants",
+  tiktokUrl: "https://tiktok.com/@petitssavants",
+  city: "Cotonou, Bénin",
 };
+
 
 export const backToSchool = {
   date: "14 septembre 2026",
@@ -42,13 +41,13 @@ export const backToSchool = {
 export const currency = "FCFA";
 
 export const PRICE_PER_KIT_TIERS = [
-  { minKits: 1, pricePerKit: 15000 },
-  { minKits: 2, pricePerKit: 13500 },
-  { minKits: 3, pricePerKit: 12000 },
+  { minKits: 1, pricePerKit: 12000 },   // 1 kit = 12 000 FCFA
+  { minKits: 2, pricePerKit: 11000 },   // 2 kits = 22 000 FCFA (économie 2 000 FCFA)
+  { minKits: 3, pricePerKit: 11000 },
 ] as const;
 
 // Prix de référence "avant réduction" affiché barré, par kit.
-export const REFERENCE_PRICE_PER_KIT = 22000;
+export const REFERENCE_PRICE_PER_KIT = 15000;
 
 export const MAX_KITS_IN_MODAL = 10;
 

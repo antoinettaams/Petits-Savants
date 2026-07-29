@@ -35,6 +35,12 @@ export const metadata: Metadata = {
     locale: "fr_BJ",
     type: "website",
   },
+  // Vérification du domaine Meta (Business Manager).
+  verification: {
+    other: {
+      "facebook-domain-verification": "mainizl4e4l8e9bqgx9gyzbq7yfgcq",
+    },
+  },
 };
 
 export default function RootLayout({

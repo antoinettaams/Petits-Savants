@@ -16,9 +16,11 @@ export const brand = {
   // pour les liens wa.me).
   whatsappNumber: "22943757982",
   whatsappDisplay: "+229 43 75 79 82",
-  // [PLACEHOLDER] Adresse email de réception des commandes (utilisée comme
-  // solution de repli dans la modale de commande, plus affichée en pied de
-  // page)
+  // ID du formulaire Formspree (https://formspree.io) qui reçoit les
+  // commandes passées depuis la modale.
+  formspreeId: "mkodvqzg",
+  // [PLACEHOLDER] Adresse email de réception des commandes (affichée en
+  // pied de page)
   orderEmail: "commandes@petits-savants.example",
   facebookUrl: "https://www.facebook.com/profile.php?id=61592126514766",
   tiktokUrl: "https://www.tiktok.com/@petits.savants",

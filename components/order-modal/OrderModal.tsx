@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MessageCircle, Minus, Plus, ShieldCheck, X } from "lucide-react";
+import { Mail, Minus, Plus, ShieldCheck, X } from "lucide-react";
 import {
   brand,
   packs,
@@ -23,6 +23,9 @@ export default function OrderModal() {
   const [lastName, setLastName] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
@@ -37,6 +40,9 @@ export default function OrderModal() {
       const matchedPack = packs.find((p) => p.id === initialPackId);
       const nextKits = matchedPack?.kits ?? packs.find((p) => p.highlight)?.kits ?? 1;
       if (nextKits !== kits) setKits(nextKits);
+      setIsSuccess(false);
+      setSubmitError(null);
+      setIsSubmitting(false);
     }
   }
 
@@ -62,23 +68,10 @@ export default function OrderModal() {
   const compareAtTotal = useMemo(() => computeCompareAtTotal(kits), [kits]);
   const perKit = useMemo(() => pricePerKitFor(kits), [kits]);
 
-  const message = useMemo(() => {
-    const packLabel = matchedPack ? matchedPack.title : `${kits} kits personnalisés`;
-    const lines = [
-      `Bonjour ${brand.name} ! Je souhaite commander :`,
-      `- Pack : ${packLabel} (${packSubtitle(kits)})`,
-      `- Total : ${formatPrice(total)}`,
-      `- Nom : ${lastName || "[à préciser]"}`,
-      `- Prénom : ${firstName || "[à préciser]"}`,
-      `- Ville : ${city || "[à préciser]"}`,
-      `- Téléphone : ${phone || "[à préciser]"}`,
-      "",
-      "Merci de confirmer ma commande.",
-    ];
-    return lines.join("\n");
-  }, [matchedPack, kits, total, lastName, firstName, city, phone]);
-
-  const whatsappUrl = `https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  // Endpoint Formspree qui reçoit les commandes par email.
+  const formspreeEndpoint = brand.formspreeId
+    ? `https://formspree.io/f/${brand.formspreeId}`
+    : "";
 
   if (!isOpen) return null;
 
@@ -95,10 +88,59 @@ export default function OrderModal() {
     });
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    trackPurchase();
-    window.location.href = whatsappUrl;
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const packLabel = matchedPack ? matchedPack.title : `${kits} kits personnalisés`;
+    const payload = {
+      _subject: `Nouvelle commande ${brand.name} — ${firstName} ${lastName}`,
+      Prénom: firstName,
+      Nom: lastName,
+      Ville: city,
+      Téléphone: phone,
+      "Nombre de kits": kits,
+      Pack: packLabel,
+      "Prix unitaire": formatPrice(perKit),
+      "Total à payer": formatPrice(total),
+      "Message complet": [
+        `Bonjour ${brand.name} ! Je souhaite commander :`,
+        `- Pack : ${packLabel} (${packSubtitle(kits)})`,
+        `- Total : ${formatPrice(total)}`,
+        `- Nom : ${lastName}`,
+        `- Prénom : ${firstName}`,
+        `- Ville : ${city}`,
+        `- Téléphone : ${phone}`,
+        "",
+        "Merci de confirmer ma commande.",
+      ].join("\n"),
+    };
+
+    try {
+      if (!formspreeEndpoint) {
+        console.warn("Formspree non configuré. Commande en local :", payload);
+        trackPurchase();
+        setIsSuccess(true);
+        return;
+      }
+      const res = await fetch(formspreeEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Échec de l'envoi");
+      trackPurchase();
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Erreur d'envoi de la commande :", error);
+      setSubmitError("L'envoi a échoué. Veuillez réessayer ou nous contacter directement.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -137,6 +179,27 @@ export default function OrderModal() {
           </button>
         </div>
 
+        {isSuccess ? (
+          <div className="mt-8 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-tint">
+              <ShieldCheck size={32} strokeWidth={1.8} className="text-primary" />
+            </div>
+            <h3 className="mt-4 font-display text-xl font-semibold text-ink">
+              Commande envoyée !
+            </h3>
+            <p className="mt-2 text-muted">
+              Merci ! Nous vous contacterons très rapidement pour confirmer votre commande.
+            </p>
+            <button
+              type="button"
+              onClick={closeModal}
+              className="mt-6 rounded-full bg-accent px-8 py-3 font-display font-semibold text-cream transition hover:bg-accent-dark"
+            >
+              Fermer
+            </button>
+          </div>
+        ) : (
+          <>
         {/* Sélecteur de pack rapide */}
         <div className="mt-6 flex flex-wrap gap-2">
           {packs.map((pack) => {
@@ -264,11 +327,16 @@ export default function OrderModal() {
 
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 font-display text-base font-semibold text-cream shadow-sm transition hover:bg-accent-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/40 active:scale-[0.99]"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 font-display text-base font-semibold text-cream shadow-sm transition hover:bg-accent-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/40 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <MessageCircle size={19} strokeWidth={2} />
-            Confirmer la commande
+            <Mail size={19} strokeWidth={2} />
+            {isSubmitting ? "Envoi en cours..." : "Confirmer la commande"}
           </button>
+
+          {submitError && (
+            <p className="text-center text-sm text-accent">{submitError}</p>
+          )}
 
           <p className="flex items-center justify-center gap-2 text-center text-xs text-muted">
             <ShieldCheck size={15} strokeWidth={1.8} className="shrink-0 text-primary" />
@@ -276,6 +344,8 @@ export default function OrderModal() {
             Money (MTN MoMo / Moov Money).
           </p>
         </form>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Mail, MessageCircle, Minus, Plus, ShieldCheck, X } from "lucide-react";
+import { MessageCircle, Minus, Plus, ShieldCheck, X } from "lucide-react";
 import {
   brand,
   packs,
@@ -79,9 +79,6 @@ export default function OrderModal() {
   }, [matchedPack, kits, total, lastName, firstName, city, phone]);
 
   const whatsappUrl = `https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(message)}`;
-  const mailtoUrl = `mailto:${brand.orderEmail}?subject=${encodeURIComponent(
-    `Commande ${brand.name} — ${matchedPack ? matchedPack.title : `${kits} kits`}`
-  )}&body=${encodeURIComponent(message)}`;
 
   if (!isOpen) return null;
 
@@ -270,17 +267,8 @@ export default function OrderModal() {
             className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 font-display text-base font-semibold text-cream shadow-sm transition hover:bg-accent-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/40 active:scale-[0.99]"
           >
             <MessageCircle size={19} strokeWidth={2} />
-            Confirmer la commande via WhatsApp
+            Confirmer la commande
           </button>
-
-          <a
-            href={mailtoUrl}
-            onClick={trackPurchase}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-surface-line px-6 py-3.5 text-sm font-semibold text-ink transition hover:border-primary"
-          >
-            <Mail size={17} strokeWidth={1.8} />
-            Ou commander par email
-          </a>
 
           <p className="flex items-center justify-center gap-2 text-center text-xs text-muted">
             <ShieldCheck size={15} strokeWidth={1.8} className="shrink-0 text-primary" />

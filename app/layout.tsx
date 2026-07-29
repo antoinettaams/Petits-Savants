@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
+import MetaPixel from "@/components/MetaPixel";
 import { OrderModalProvider } from "@/components/order-modal/OrderModalContext";
 
 const fraunces = Fraunces({
@@ -44,6 +45,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${fraunces.variable} ${workSans.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-bg text-ink antialiased">
+        <MetaPixel />
         <OrderModalProvider>
           <Header />
           <main className="flex-1 pb-16 md:pb-0">{children}</main>

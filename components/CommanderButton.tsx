@@ -1,6 +1,7 @@
 "use client";
 
 import { useOrderModal } from "./order-modal/OrderModalContext";
+import { track } from "@/lib/fpixel";
 
 type CommanderButtonProps = {
   packId?: string;
@@ -36,7 +37,11 @@ export default function CommanderButton({
   return (
     <button
       type="button"
-      onClick={() => openModal(packId)}
+      onClick={() => {
+        // Événement Meta : intention d'achat au clic sur "Commander".
+        track("InitiateCheckout");
+        openModal(packId);
+      }}
       className={`rounded-full font-display font-semibold transition active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/40 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
     >
       {children}

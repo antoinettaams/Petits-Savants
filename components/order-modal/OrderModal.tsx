@@ -13,6 +13,7 @@ import {
   MAX_KITS_IN_MODAL,
 } from "@/lib/site-config";
 import { useOrderModal } from "./OrderModalContext";
+import { track } from "@/lib/fpixel";
 
 export default function OrderModal() {
   const { isOpen, initialPackId, closeModal } = useOrderModal();
@@ -84,8 +85,22 @@ export default function OrderModal() {
 
   if (!isOpen) return null;
 
+  // Événement Meta : achat à la confirmation de commande.
+  // (Boutique en paiement à la livraison : l'achat est compté au moment où
+  // le client confirme sa commande, pas au règlement.)
+  function trackPurchase() {
+    track("Purchase", {
+      value: total,
+      currency: "XOF",
+      content_type: "product",
+      contents: [{ id: matchedPack?.id ?? `${kits}-kits`, quantity: kits }],
+      num_items: kits,
+    });
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    trackPurchase();
     window.location.href = whatsappUrl;
   }
 
@@ -260,6 +275,7 @@ export default function OrderModal() {
 
           <a
             href={mailtoUrl}
+            onClick={trackPurchase}
             className="flex w-full items-center justify-center gap-2 rounded-full border border-surface-line px-6 py-3.5 text-sm font-semibold text-ink transition hover:border-primary"
           >
             <Mail size={17} strokeWidth={1.8} />

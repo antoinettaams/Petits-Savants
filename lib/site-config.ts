@@ -12,14 +12,16 @@
 export const brand = {
   name: "Petits Savants",
   tagline: "Le cahier magique qui donne le goût d'apprendre",
-  // [PLACEHOLDER] Numéro WhatsApp au format international sans "+" ni espaces
-  // (utilisé pour les liens wa.me). Exemple Bénin : 22990000000
-  whatsappNumber: "22900000000",
-  whatsappDisplay: "+229 00 00 00 00", // [PLACEHOLDER]
-  // [PLACEHOLDER] Adresse email de réception des commandes
+  // Numéro WhatsApp au format international sans "+" ni espaces (utilisé
+  // pour les liens wa.me).
+  whatsappNumber: "22943757982",
+  whatsappDisplay: "+229 43 75 79 82",
+  // [PLACEHOLDER] Adresse email de réception des commandes (utilisée comme
+  // solution de repli dans la modale de commande, plus affichée en pied de
+  // page)
   orderEmail: "commandes@petits-savants.example",
-  facebookUrl: "https://facebook.com/petitssavants", // [PLACEHOLDER]
-  tiktokUrl: "https://tiktok.com/@petitssavants", // [PLACEHOLDER]
+  facebookUrl: "https://www.facebook.com/profile.php?id=61592126514766",
+  tiktokUrl: "https://www.tiktok.com/@petits.savants",
   city: "Cotonou, Bénin", // [PLACEHOLDER]
 };
 
@@ -32,37 +34,31 @@ export const backToSchool = {
 // -----------------------------------------------------------------------
 // PRIX — variables à ajuster ici. Un "Kit" = 1 kit complet Petits Savants
 // (4 cahiers à rainures 3D + 1 stylo magique + 1 guide-doigt + 10 recharges).
-// [PLACEHOLDER] Tous les montants sont provisoires (Francs CFA / XOF).
-//
-// Le prix par kit baisse automatiquement par palier de quantité : modifie
-// simplement les paliers ci-dessous, tous les prix affichés sur le site
-// (cartes de packs, modale de commande, message WhatsApp) se recalculent
-// à partir d'ici.
+// Prix réels, livraison comprise : 13 000 F (1 kit), 24 000 F (2 kits),
+// 35 000 F (3 kits) — soit 13 000 F pour le premier kit puis 11 000 F par
+// kit supplémentaire. Modifie les deux valeurs ci-dessous pour changer tous
+// les prix affichés sur le site (cartes de packs, modale de commande,
+// message WhatsApp) : ils se recalculent automatiquement à partir d'ici.
 // -----------------------------------------------------------------------
 export const currency = "FCFA";
 
-export const PRICE_PER_KIT_TIERS = [
-  { minKits: 1, pricePerKit: 15000 },
-  { minKits: 2, pricePerKit: 13500 },
-  { minKits: 3, pricePerKit: 12000 },
-] as const;
+export const FIRST_KIT_PRICE = 13000;
+export const EXTRA_KIT_PRICE = 11000;
 
-// Prix de référence "avant réduction" affiché barré, par kit.
-export const REFERENCE_PRICE_PER_KIT = 22000;
+// Prix de référence "avant réduction" affiché barré, par kit (les autres
+// packs suivent proportionnellement à partir de cette valeur).
+export const REFERENCE_PRICE_PER_KIT = 15000;
 
 export const MAX_KITS_IN_MODAL = 10;
 
-export function pricePerKitFor(kits: number): number {
-  let price: number = PRICE_PER_KIT_TIERS[0].pricePerKit;
-  for (const tier of PRICE_PER_KIT_TIERS) {
-    if (kits >= tier.minKits) price = tier.pricePerKit;
-  }
-  return price;
-}
-
 export function computeTotal(kits: number): number {
   const safeKits = Math.max(1, Math.round(kits));
-  return safeKits * pricePerKitFor(safeKits);
+  return FIRST_KIT_PRICE + (safeKits - 1) * EXTRA_KIT_PRICE;
+}
+
+export function pricePerKitFor(kits: number): number {
+  const safeKits = Math.max(1, Math.round(kits));
+  return Math.round(computeTotal(safeKits) / safeKits);
 }
 
 export function computeCompareAtTotal(kits: number): number {

@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import Logo from "./Logo";
 import { brand } from "@/lib/site-config";
 
@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-ink text-cream">
       <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2">
           <div>
             <Logo variant="dark" />
             <p className="mt-2 text-sm text-cream/65">{brand.tagline}</p>
@@ -29,15 +29,6 @@ export default function Footer() {
                 >
                   <MessageCircle size={15} strokeWidth={1.8} />
                   WhatsApp : {brand.whatsappDisplay}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${brand.orderEmail}`}
-                  className="flex items-center gap-2 hover:text-cream"
-                >
-                  <Mail size={15} strokeWidth={1.8} />
-                  {brand.orderEmail}
                 </a>
               </li>
               <li className="flex items-center gap-4 pt-1">
@@ -61,18 +52,6 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
-
-          <div>
-            <p className="mb-3 font-display text-sm font-semibold">
-              Informations
-            </p>
-            {/* [PLACEHOLDER] Mentions légales basiques — à compléter avec
-                les informations réelles de l'entreprise (nom légal, RCCM/IFU
-                si applicable, adresse) avant mise en ligne définitive. */}
-            <p className="text-xs leading-relaxed text-cream/55">
-              {`${brand.name} — Vente en ligne au Bénin. Paiement à la livraison ou par Mobile Money (MTN MoMo / Moov Money). [PLACEHOLDER : nom légal de l'entreprise / numéro RCCM / IFU].`}
-            </p>
           </div>
         </div>
 
